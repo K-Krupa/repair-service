@@ -1,5 +1,6 @@
 package pl.kacperkrupa.repair_service.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.kacperkrupa.repair_service.model.RepairOrder;
@@ -25,9 +26,12 @@ public class RepairOrderService {
         return repairOrderRepository.save(order);
     }
 
-    public RepairOrder changeStatus (Long orderId, RepairStatus newStatus) {
-        RepairOrder order = repairOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Nie znaleziono zlecenia o ID: " + orderId));
+    @Transactional
+    public RepairOrder changeStatus(Long orderId, RepairStatus newStatus) {
+        RepairOrder order = repairOrderRepository.findById(orderId).orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Nie znaleziono zlecenia o ID: " + orderId));
+
         order.setStatus(newStatus);
-        return repairOrderRepository.save(order);
+
+        return order;
     }
 }
